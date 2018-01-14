@@ -1,6 +1,6 @@
 /*
 	Author: John Nemeth
-	Description: printing byte representations of memory addresses
+	Description: printing byte representations of variables
 	Sources: Class/assignment material
 		 book, pg 42-26
 */
