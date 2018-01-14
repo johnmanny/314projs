@@ -3,35 +3,26 @@
 	Description: using bitwise operators to replace bytes
 	Sources: Class/assignment material
 		 book, pg 42-26
+		 https://stackoverflow.com/questions/10132906/replace-byte-in-32-bit-number (for shifting bytes)
 */
 
 #include <stdio.h>
 
 unsigned int replace (unsigned int x, int i, unsigned char b) {
-	unsigned int shiftVal = 8 * i;
-	unsigned int new = b, toLeft = x, toRight = x;
-	printf("#####\n\t|Passed x: 0x%X |Passed i: %x |Passed char: 0x%08X\n", x, i, b);
+	// create new shiftVal by shifting bytes by 3
+	unsigned int shiftVal = i << 3;
+	unsigned int mask = 0xFF << shiftVal;
+	unsigned int new = b;
+	
+	// negate mask and & with x to zero out relevant bits
+	printf("\t|mask:        0x%08X\n", ~mask);
+	x = ~mask & x;
+	printf("\t|masked int:  0x%08X\n", x);
 
-	// shift given char as int
+	// shift passed replacement and return new
 	new = new << shiftVal;
-	printf("\tShifted char:   0x%08X\n", new);
-	
-	// get all bytes to left
-	printf("\ttoLeft before:  0x%08X", toLeft);
-	toLeft = toLeft >> (shiftVal + 7);
-	toLeft = toLeft << (shiftVal + 7);
-	printf("  after: 0x%08X\n", toLeft);
-	
-	// get all bytes to right
-	printf("\ttoRight before: 0x%08X", toRight);
-	toRight = toRight << (31 - shiftVal);
-	toRight = toRight >> (31 - shiftVal);
-	printf("  after: 0x%08X\n", toRight);
-
-	// place bytes to left and right of new
-	new = new | toLeft;
-	new = new | toRight;
-	return new;
+	printf("\t|new shifted: 0x%08X\n", new);
+	return x | new;
 }
 
 // main contains test cases
