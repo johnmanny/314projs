@@ -3,15 +3,15 @@
 	Description: using bitwise operations to find 1's on even bit indices
 	Sources: Class/assignment material
 		 book, pg 42-26
-		 https://www.geeksforgeeks.org/swap-all-odd-and-even-bits/
+		 https://www.geeksforgeeks.org/swap-all-odd-and-even-bits/  (for != 0 explanation)
 */
 
 #include <stdio.h>
 
 // to determine if any even indices in 32-bit word contains bit value '1'
 int even(unsigned int x) {
-	unsigned int evens = 0x55555555, checker = 0x0;
-	return (x & evens) != 0;
+	unsigned int evenIndices = 0x55555555;
+	return (x & evenIndices) != 0;
 }
 
 // main contains test cases
