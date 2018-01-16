@@ -19,7 +19,7 @@ unsigned int replace (unsigned int x, int i, unsigned char b) {
 	x = ~mask & x;
 	printf("\t|masked int:  0x%08X\n", x);
 
-	// shift passed replacement and return new
+	// shift passed replacement and return new 'combined' with x, creating desired replacement
 	new = new << shiftVal;
 	printf("\t|new shifted: 0x%08X\n", new);
 	return x | new;

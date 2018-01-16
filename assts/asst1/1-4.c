@@ -10,7 +10,13 @@
 
 // to determine if any even indices in 32-bit word contains bit value '1'
 int even(unsigned int x) {
+	// create mask for entire int (0x55 == 0101, aka 1's at even indices)
 	unsigned int evenIndices = 0x55555555;
+	/* & operator ensures 1's only at even indices
+		and if there are any 1 bits, it would
+		!= 0 and would return 1 for int TRUE
+		statement
+	*/
 	return (x & evenIndices) != 0;
 }
 
