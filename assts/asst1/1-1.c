@@ -21,6 +21,8 @@ void printBytes(unsigned char *start, int len) {
 	printf("\n");
 }
 
+// integers have an expected hex representation with 
+//   most significant digits first
 void printInt(int x) {
 	printBytes((unsigned char *) &x, sizeof(int));
 }
@@ -33,6 +35,8 @@ void printLong(long int x) {
 	printBytes((unsigned char *) &x, sizeof(long int));
 }
 
+// floating point numbers don't appear to have the same hex
+//   representation that integers do. 
 void printFloat(float x) {
 	printBytes((unsigned char *) &x, sizeof(float));
 }
