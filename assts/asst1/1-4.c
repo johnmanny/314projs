@@ -23,16 +23,16 @@ int even(unsigned int x) {
 // main contains test cases
 int main () {
 
-	printf("int: 0x0 - result: %x\n", even(0x0));
-	printf("int: 0x1 - result: %x\n", even(0x1));
-	printf("int: 0x2 - result: %x\n", even(0x2));
-	printf("int: 0x3 - result: %x\n", even(0x3));
-	printf("int: 0x4 - result: %x\n", even(0x4));
-	printf("int: 0x5 - result: %x\n", even(0x5));
+	printf("int: 0x0 - result: %x\n", even(0x0));	// 0 == binary 0000
+	printf("int: 0x1 - result: %x\n", even(0x1));	// 1 == binary 0001
+	printf("int: 0x2 - result: %x\n", even(0x2));	// 2 == binary 0010
+	printf("int: 0x3 - result: %x\n", even(0x3));	// 3 == binary 0011
+	printf("int: 0x4 - result: %x\n", even(0x4));	// 4 == binary 0100
+	printf("int: 0x5 - result: %x\n", even(0x5));	// 5 == binary 0101
 	printf("int: 0x55 - result: %x\n", even(0x55));
-	printf("int: 0x8 - result: %x\n", even(0x8));
-	printf("int: 0xFFFFFFFF - result: %x\n", even(0xFFFFFFFF));
-	printf("int: 0xAAAAAAAA - result: %x\n", even(0xAAAAAAAA));
+	printf("int: 0x8 - result: %x\n", even(0x8));	// 8 == binary 1000
+	printf("int: 0xFFFFFFFF - result: %x\n", even(0xFFFFFFFF));	// F == binary 1111
+	printf("int: 0xAAAAAAAA - result: %x\n", even(0xAAAAAAAA));	// A == binary 1010
 	
 	return 0;
 }
