@@ -13,8 +13,12 @@ int mask(int n) {
 	x = x >> (31 - n);
 	return x;
 	*/
+	
+	// x is 1111...1110 in binary
 	unsigned int x = 0xFFFFFFFE;
+	// since shifting by 32 is undefined, we ensure we don't shift by 32
 	x = x << (n - 1);
+	// should find a better way to accomplish because it doesn't satisfy mask(0) correctly
 	return ~x;
 }
 
