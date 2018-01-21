@@ -1,0 +1,29 @@
+4. Convert following hex values to decimals assuming they're stored as 2s complement integers:
+	a) 0x000000FF
+		binary = 0000 0000 0000 0000 0000 0000 1111 1111
+			(lead bit in word is 0, so, positive number)
+		decimal = 2^7 + 2^6 + 2^5 + 2^4 + 2^3 + 2^2 + 2^1 + 2^0
+			= 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1
+			= 255
+		
+		so, decimal = 255	
+		
+			( if word was least sig. 8 bits, dec. would be -1)
+				= -2^7 + 2^6 + 2^5 + 2^4 + 2^3 + 2^2 + 2^1 + 2^0
+				= -128 + 64 + 32 + 16 + 8 + 4 + 2 + 1
+				= -1
+			
+
+	b) 0xFFFFFCE6
+		binary = 1111 1111 1111 1111 1111 1100 1110 0110
+			(complement and add 1)
+			0000 0000 0000 0000 0000 0011 0001 1001 
+			2^9 + 2^8 + 2^4 + 2^3 + 2^0
+			= 512 + 256 + 16 + 8 + 1
+			= 793 + 1 (add one to complement)
+			
+		decimal = -794	(switch to negative)
+
+	c) 0xFFFFFFFF
+		binary = 1111 1111 1111 1111 1111 1111 1111 1111
+		decimal = -1
