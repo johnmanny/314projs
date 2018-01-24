@@ -14,8 +14,14 @@ int ge(float x, float y) {
 	unsigned sy = uy >> 31;		// extract sign bit of uy
 	ux <<= 1;	//drop sign bit of ux
 	uy <<= 1;	//drop sign bit of uy
+
+	printf("\tunsigned x(ux): %i\n", ux);
+	printf("\tunsigned y(uy): %i\n", uy);
+	printf("\tsign of x(sx): %i\n", sx);
+	printf("\tsign of y(sy): %i\n", sy);
 	
 	// todo: return using sx, sy, ux, uy
+	return ux;
 
 }
 

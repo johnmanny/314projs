@@ -13,6 +13,7 @@ int mask(int n) {
 	unsigned int x = 0xFFFFFFFE;
 	// since shifting by 32 is undefined, we ensure we don't shift by 32
 	x = x << (n - 1);
+	// return complement of mask to exchange left and right bits for project requirement
 	return ~x;
 }
 
