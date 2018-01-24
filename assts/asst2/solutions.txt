@@ -33,7 +33,7 @@
 		( when we breakdown as (-1)^S * M * 2^E where 
 		 S = bit 31, E = bits 23-30, and M = bits 0-22 )
 
-		decimal: 0 (can't be -0)
+		decimal: -0 
 
 	b) 0x41220000
 		binary: 0|100 0001 0|010 0010 0000 0000 0000 0000

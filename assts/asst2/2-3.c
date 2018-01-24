@@ -15,13 +15,13 @@ int ge(float x, float y) {
 	ux <<= 1;	//drop sign bit of ux
 	uy <<= 1;	//drop sign bit of uy
 
-	printf("\tunsigned x(ux): %i\n", ux);
-	printf("\tunsigned y(uy): %i\n", uy);
-	printf("\tsign of x(sx): %i\n", sx);
-	printf("\tsign of y(sy): %i\n", sy);
+	
+	unsigned temp = ux ^ uy;
+	unsigned signbit = sx ^ sy;
+	printf("\ttemp: %x\n", temp);
 	
 	// todo: return using sx, sy, ux, uy
-	return ux;
+	return (((temp & ux) | (signbit & sx)) != 0);
 
 }
 
