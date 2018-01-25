@@ -8,18 +8,25 @@
 
 // creates mask based on passed int
 int mask(int n) {
-	
-	// x is 1111...1110 in binary *note: could've used signed int -1 << 1*
-	unsigned int x = 0xFFFFFFFE;
-	// since shifting by 32 is undefined, we ensure we don't shift by 32
-	x = x << (n - 1);
-	// return complement of mask to exchange left and right bits for project requirement
-	return ~x;
+
+	//// method 1
+	// declare long long to avoid not being able to shift by 32
+	unsigned long long x = 1;
+	// shift by number of bits and subtract 1 to turn on all bits to left
+	x = (x << n) - 1;
+	// return as unsigned 32-bit word
+	return (unsigned int) x;
+
+	/*
+	unsigned x = 2;
+	x = x << (n - 1) - 1;
+	return x;
+	*/
 }
 
 // main function with examples
 int main () {
-
+	printf("mask int: 0 - result: 0x%X\n", mask(0));
 	printf("mask int: 1 - result: 0x%X\n", mask(1));
 	printf("mask int: 2 - result: 0x%X\n", mask(2));
 	printf("mask int: 3 - result: 0x%X\n", mask(3));

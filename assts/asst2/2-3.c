@@ -15,13 +15,10 @@ int ge(float x, float y) {
 	ux <<= 1;	//drop sign bit of ux
 	uy <<= 1;	//drop sign bit of uy
 
-	
-	unsigned temp = ux ^ uy;
-	unsigned signbit = sx ^ sy;
-	printf("\ttemp: %x\n", temp);
-	
-	// todo: return using sx, sy, ux, uy
-	return (((temp & ux) | (signbit & sx)) != 0);
+	// case1: equal in value then signs can be whatever
+	// case2: if x greater, then sign can be equal or less than y (x can't be negative if y positive)
+	// case3: if x smaller, then sign must be less than y (needs to be positive)
+	return ((ux == uy) && ((sx >= sy) || (sx < sy))) || ((ux > uy) && (sx <= sy)) || ((ux < uy) && (sx < sy));
 
 }
 
@@ -33,6 +30,7 @@ int main () {
 	printf("\tx: 0.0f ### y: 1.0f ###   result: %x\n", ge(0.0f, 1.0f));
 	printf("\tx: 1.0f ### y: 0.0f ###   result: %x\n", ge(1.0f, 0.0f));
 	printf("\tx: 0.0f ### y: -1.0f ###  result: %x\n", ge(0.0f, -1.0f));
+	printf("\tx: 5.5f ### y: -6.5f ###  result: %x\n", ge(5.5f, -6.5f));
 		
 	return 0;
 }
