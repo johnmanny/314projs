@@ -8,19 +8,20 @@
 
 // creates mask based on passed int
 int mask(int n) {
-
-	//// method 1
+	
+	//// method 1, judged on piazza to be permitted
 	// declare long long to avoid not being able to shift by 32
 	unsigned long long x = 1;
 	// shift by number of bits and subtract 1 to turn on all bits to left
 	x = (x << n) - 1;
 	// return as unsigned 32-bit word
 	return (unsigned int) x;
-
+	
 	/*
-	unsigned x = 2;
-	x = x << (n - 1) - 1;
-	return x;
+	// method 2, doesn't consider mask(0)
+	unsigned x = 0xFFFFFFFE;
+	x = x << (n - 1);
+	return ~x;
 	*/
 }
 
