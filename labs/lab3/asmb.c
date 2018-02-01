@@ -101,6 +101,10 @@ struct BinArray *BinArray_Malloc(int size) {
 	returnValue = (struct BinArray *)malloc(sizeof(struct BinArray));	// allocate 1 struct on the heap
 	returnValue->Length = size;	//init size value
 	returnValue->Data = (int *) malloc (sizeof(int) * size);	//allocate n*integers on the heap
+	if (returnValue->Data == NULL) {
+		fprintf(stderr, "data is invalid, MALLOC failed\n");
+		exit(BAD_DATA);
+	}
 	for(int i = 0; i < size; i++) {
 		returnValue->Data[i] = 0;	//init all memory to 0
 	}
@@ -128,4 +132,13 @@ void BinArray_Print(struct BinArray *ptr) {
 	// loop through each item and print using PrintBinary
 }
 
-
+int main(void) {
+	int count;	//local variable to store count
+	fprintf(stdout, "Read binary Number Value: ");
+	count = ReadBinary(stdin);	//read a count
+	fprintf(stdout, "\nBinary Value Printed: ");
+	PrintBinary(count, stdout);	// print the count
+	struct BinArray *test = BinArray_Malloc(count);	//allocate a binarray of size count
+	BinArray_Free(&test);	//free the binarray
+	return EXIT_SUCCESS;
+}
