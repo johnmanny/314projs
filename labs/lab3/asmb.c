@@ -81,6 +81,7 @@ int ReadBinary(FILE *ptr) {
 	return ParseBinary(buffer, strlen(buffer));
 }
 
+
 void PrintBinary(int bin_value,FILE *ptr) {
 	fprintf(ptr, "0b");	// print leading signiature
 	int start = 0;
