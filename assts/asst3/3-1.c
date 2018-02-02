@@ -1,7 +1,7 @@
 /*
 	Author: John Nemeth
-	Description: 
-	Sources: heavy reference from lab3 example program, and i mean heavy. 
+	Description: creating and performing operations on dynamic, variable integer array
+	Sources: heavy reference from lab3 example program, and i mean heavy (thanks roscoe). 
 		 prior class/assignment material
 		 https://www.geeksforgeeks.org/clearing-the-input-buffer-in-cc/
 */
@@ -19,10 +19,10 @@ struct IntArray {
 	int *dataPtr;
 };
 
-// used for input checking
+// used to allowed negative numbers in input checking
 enum BOOLS {
-	TRUE = 1,
-	FALSE = 0,
+	NEG_ALLOWED = 1,
+	NEG_NOTALLOWED = 0,
 };
 
 // codes for errors, taken from lab3
@@ -62,7 +62,6 @@ void freeIntArray(struct IntArray **arrayPtr) {
 // check for valid user input
 int checkInput(FILE *ptr, int negAllowed) {
 	int input;
-		
 	if (fscanf(ptr, "%d", &input) != 1 || (input < 0)) {
 		if (negAllowed) {
 			if (input < 0)
@@ -78,11 +77,12 @@ int checkInput(FILE *ptr, int negAllowed) {
 	return input;
 }
 
+// intArray operations //////////////////////////////////////////////////////
 // prompts and reads ints from user to fill array
 void readIntArray(struct IntArray *array) {
 	for (int i = 0; i < array->length; i++) {
 		printf("Enter int %d: ", i + 1);
-		array->dataPtr[i] = checkInput(stdin, TRUE);
+		array->dataPtr[i] = checkInput(stdin, NEG_ALLOWED);
 	}
 }
 
@@ -123,11 +123,11 @@ void printIntArray(struct IntArray *array) {
 	}
 }
 
-// main
+// main ////////////////////////////////////////////////////////////
 int main () {
 	int length;
 	fprintf(stdout, "Enter Length: ");
-	length = checkInput(stdin, FALSE);			// send input to be parsed and corrected
+	length = checkInput(stdin, NEG_NOTALLOWED);		// send input to be parsed and corrected
 	struct IntArray *intArray = mallocIntArray(length);	// create array
 	readIntArray(intArray);			// prompt user to fill array
 	sortIntArray(intArray);			// sort array
