@@ -136,7 +136,7 @@ unsigned int parseInput(char *input, int length, int negAllowed) {
 			break;
 		case '\r':
 		case '\n':
-		case 0:				// case for emptyspace in input
+		case 0:				// empty case
 			break;
 		default:			// if not character cases, input not allowed.
 			fprintf(stderr, "Invalid input character '%c' parsed! Re-Enter Value(or q): ", value);
