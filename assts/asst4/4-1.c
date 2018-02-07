@@ -1,12 +1,13 @@
 /*
 	Author: John Nemeth
-	Description: 
+	Description: decode given assembly code
 	Sources: Class/assignment material
 	https://stackoverflow.com/questions/4008159/assembly-language-to-c (for conceptual understanding)
 */
 
 #include <stdio.h>
 
+// given c function
 int loop(int x, int y) {
 /*
 loop:
@@ -41,6 +42,7 @@ loop:
 	return result;
 }
 
+// contains test cases
 int main () {
 	printf("\tx: %d y: %d\n\texpected: %d returned: %d\n", 1, 5, -1, loop(1, 5));
 	printf("\tx: %d y: %d\n\texpected: %d returned: %d\n", 2, 4, -3, loop(2, 4));
