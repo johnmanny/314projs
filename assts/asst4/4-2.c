@@ -15,28 +15,35 @@ NOTES:
 	-%ebx, %esi, %edi are callee-save(called proc needs push on stack and restore
 						after operations when overwriting)
 	-%eax, %edx, %ecx are caller-save(called proc can overwrite without saving)
+	-array[i] is array of N values. each i value starts at at reference value array start+4+(4*N*i)+4*j
+		with 0 <= i <= N-1
 	
 .L3:				- jump point for inner loop
-	mov1 (%edx), %esi 	- store val at %edx into %esi
-	mov1 (%eax), %ecx	- store val of %eax(j) in %ecx
-	addl $4, %eax		- add 4 to %eax(j)
-	addl $40, %edx		- add 40 to %edx
-	movl %esi -4(%eax)	- store %esi in 
-	movl %ecx -40(%edx)	
-	cmpl %ebx, %eax		- compare double word %eax(j) - %ebx(i)
+	mov1 (%edx), %esi 	- store (i)%edx in (t)%esi (updated each time iteration of j)
+	mov1 (%eax), %ecx	- store (j)%eax in %ecx
+	addl $4, %eax		- add 4 to (j)%eax (move to next column)
+	addl $40, %edx		- add N*4 to (array[i])%edx (moves to next row)
+	movl %esi, -4(%eax)	- store (t)%esi in -4offset(ptr to j) (moves to previous column)
+	movl %ecx, -40(%edx)	- store (j + 4)%ecx in N*-4offset(array[i])%edx (moves to previous row)
+	cmpl %ebx, %eax		- compare double word (j + 1)%eax - (i)%ebx
 	jne .L3			- jump .L3 if ~ZF(not equal or not zero)
 */
 
 void transpose(array_t a) {
 	for(int i = 0; i < N; ++i) {
-		for(int j = 0; j != i; ++j) {
-			/* original:
+		/* original:
+		for (int j = 0; j < i; ++j)
 			int t = a[i][j];
 			a[i][j] = a[j][i];
 			a[j][i] = t;
-			*/
-			
-
+		*/
+		// revised:
+		for(int j = 0; j != i; ++j) {
+			int * t = &a[i][0] + j;
+			int * s = &a[j][0] + i;
+			int x = *s;
+			*s = *t;
+			*t = x;
 		}
 	}
 }
@@ -46,13 +53,28 @@ int main () {
 	array_t testArray;
 	int count = 1;
 	// initialize matrix values
+	printf("{ ");
 	for (int i = 0; i < N; i++) {
+		printf("{ ");
 		for (int j = 0; j < N; j++) {
 			testArray[i][j] = count;
 			count++;
-			printf("val at %d, %d: %d\n", i + 1, j + 1, testArray[i][j]);
+			printf("%d, ", testArray[i][j]);
 		}
+		printf("} ");
 	}
+	printf(" }\n");
+	printf("after transpose\n");
+	printf("{ ");
+	transpose(testArray);
+	for (int i = 0; i < N; i++) {
+		printf("{ ");
+		for (int j = 0; j < N; j++) {
+			printf("%d, ", testArray[i][j]);
+		}
+		printf("} ");
+	}
+	printf(" }\n");
 
 	return 0;
 }
