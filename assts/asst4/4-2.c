@@ -19,7 +19,7 @@ NOTES:
 		with 0 <= i <= N-1
 	
 .L3:				- jump point for inner loop
-	mov1 (%edx), %esi 	- store (i)%edx in (t)%esi (updated each time iteration of j)
+	mov1 (%edx), %esi 	- store (i)%edx in (t)%esi
 	mov1 (%eax), %ecx	- store (j)%eax in %ecx
 	addl $4, %eax		- add 4 to (j)%eax (move to next column)
 	addl $40, %edx		- add N*4 to (array[i])%edx (moves to next row)
