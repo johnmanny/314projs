@@ -48,33 +48,32 @@ void transpose(array_t a) {
 	}
 }
 
+// function to print matrix
+void printMatrix (array_t testArray) {
+	printf("{ ");
+	for (int i = 0; i < N; i++) {		// for rows
+		printf("{ ");
+		for (int j = 0; j < N - 1; j++) {
+			printf("%d, ", testArray[i][j]);	// print cols, except last
+		}
+		printf("%d } ", testArray[i][N - 1]);	// print last element in row for ideal formatting(without ,)
+	}
+	printf(" }\n");
+}
 // contains test cases
 int main () {
 	array_t testArray;
-	int count = 1;
-	// initialize matrix values
-	printf("{ ");
-	for (int i = 0; i < N; i++) {
-		printf("{ ");
+	int count = 1;		// start count at 1 for easy matrix position values
+	for (int i = 0; i < N; i++) {		// initialize matrix values
 		for (int j = 0; j < N; j++) {
 			testArray[i][j] = count;
 			count++;
-			printf("%d, ", testArray[i][j]);
 		}
-		printf("} ");
 	}
-	printf(" }\n");
+	printMatrix(testArray);		// print init'd matrix
+	transpose(testArray);		// use required function
 	printf("after transpose\n");
-	printf("{ ");
-	transpose(testArray);
-	for (int i = 0; i < N; i++) {
-		printf("{ ");
-		for (int j = 0; j < N; j++) {
-			printf("%d, ", testArray[i][j]);
-		}
-		printf("} ");
-	}
-	printf(" }\n");
+	printMatrix(testArray);		// print transpose'd
 
 	return 0;
 }
