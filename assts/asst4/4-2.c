@@ -19,46 +19,57 @@ NOTES:
 		with 0 <= i <= N-1
 	
 .L3:				- jump point for inner loop
-	mov1 (%edx), %esi 	- store (i)%edx in (t)%esi
-	mov1 (%eax), %ecx	- store (j)%eax in %ecx
-	addl $4, %eax		- add 4 to (j)%eax (move to next column)
-	addl $40, %edx		- add N*4 to (array[i])%edx (moves to next row)
-	movl %esi, -4(%eax)	- store (t)%esi in -4offset(ptr to j) (moves to previous column)
-	movl %ecx, -40(%edx)	- store (j + 4)%ecx in N*-4offset(array[i])%edx (moves to previous row)
-	cmpl %ebx, %eax		- compare double word (j + 1)%eax - (i)%ebx
-	jne .L3			- jump .L3 if ~ZF(not equal or not zero)
+mov1 (%edx), %esi 	- store (a[i][j] value)%edx in (t)%esi -- (starting position after every iter of outer loop,
+								    which, according to assembly, is a diagonal)
+mov1 (%eax), %ecx	- store (a[j][i] value)%eax in (s)%ecx
+addl $4, %eax		- add 4 to (ptr to a[j][i])%eax (move to next column)
+addl $40, %edx		- add N*4 to (ptr to a[i][j])%edx (moves to next row)
+movl %esi, -4(%eax)	- store (t)%esi in -4offset(a[j][i])
+movl %ecx, -40(%edx)	- store (s)%ecx in N*-4offset(array[i][j])%edx 
+cmpl %ebx, %eax		- compare double word (ptr to a[j][i])%eax - (ptr to end of current row)%ebx
+jne .L3			- jump .L3 if ~ZF(not equal or not zero)
 */
 
 void transpose(array_t a) {
 	for(int i = 0; i < N; ++i) {
-		/* original:
-		for (int j = 0; j < i; ++j)
-			int t = a[i][j];
-			a[i][j] = a[j][i];
-			a[j][i] = t;
-		*/
-		// revised:
+		
+		/* revision 1: a revision that makes use of swapping values by pointers
 		for(int j = 0; j != i; ++j) {
 			int * t = &a[i][0] + j;
 			int * s = &a[j][0] + i;
-			int x = *s;
-			*s = *t;
-			*t = x;
+			int x = *t;
+			*t = *s;
+			*s = x;
+		}
+		*/
+		
+		// revision 2: as an explanation, create a pointer that denotes diagonal position in the matrix
+		//		move equal positions right and down and place to-transpose values to prior pointer
+		//		positions.
+		int * t = &a[i][i];
+		int * rowEnd = &a[i][0] + N;
+		//int * s = t;
+		for(int * j = t + 1; j != rowEnd; ++j) {
+			int x = *j;
+			t += N;
+			*j = *t;
+			*t = *j;
+			
 		}
 	}
 }
 
 // function to print matrix
 void printMatrix (array_t testArray) {
-	printf("{ ");
+	printf("\t{ ");
 	for (int i = 0; i < N; i++) {		// for rows
-		printf("{ ");
+		printf("{");
 		for (int j = 0; j < N - 1; j++) {
 			printf("%d, ", testArray[i][j]);	// print cols, except last
 		}
-		printf("%d } ", testArray[i][N - 1]);	// print last element in row for ideal formatting(without ,)
+		printf("%d} ", testArray[i][N - 1]);	// print last element in row for ideal formatting(without ,)
 	}
-	printf(" }\n");
+	printf("}\n");
 }
 // contains test cases
 int main () {
@@ -72,7 +83,7 @@ int main () {
 	}
 	printMatrix(testArray);		// print init'd matrix
 	transpose(testArray);		// use required function
-	printf("after transpose\n");
+	printf("\tafter transpose:\n");
 	printMatrix(testArray);		// print transpose'd
 
 	return 0;
