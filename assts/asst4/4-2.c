@@ -43,17 +43,21 @@ void transpose(array_t a) {
 		}
 		*/
 		
-		// revision 2: as an explanation, create a pointer that denotes diagonal position in the matrix
-		//		move equal positions right and down and place to-transpose values to prior pointer
-		//		positions.
+		/* revision 2: as an explanation, create a pointer that 
+			denotes diagonal position in the matrix. move 
+			equal positions right and down and place 
+			to-transpose values to prior pointer.
+			positions.
+		 */
 		int * t = &a[i][i];
 		int * rowEnd = &a[i][0] + N;
-		//int * s = t;
-		for(int * j = t + 1; j != rowEnd; ++j) {
+		rowEnd--;
+		for(int * j = t; j != rowEnd;) {
+			j++;
 			int x = *j;
 			t += N;
 			*j = *t;
-			*t = *j;
+			*t = x;
 			
 		}
 	}
