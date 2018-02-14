@@ -11,53 +11,61 @@ typedef int array_t[N][N];
 
 /*
 NOTES:
-	-similar problem on page 239
-	-%ebx, %esi, %edi are callee-save(called proc needs push on stack and restore
-						after operations when overwriting)
-	-%eax, %edx, %ecx are caller-save(called proc can overwrite without saving)
-	-array[i] is array of N values. each i value starts at at reference value array start+4+(4*N*i)+4*j
+	-array[i] is array of N values. each i value starts at at reference value array start+(4*N*i)+4*j
 		with 0 <= i <= N-1
+
+	- as a note for these assembly comments, I had them primarily describing
+		exactly what occured in the assembly (as outlined in revision 2), 
+		but opted for simpler comments after taking to the professor about
+		ease of grading. the actual descriptions for what is occuring in the
+		assembly is more detailed (such as %eax actually being a pointer to j,
+		and the comparison being between that pointer and %ebx - a pointer to the end
+		of the row). 
 	
 .L3:				- jump point for inner loop
-mov1 (%edx), %esi 	- store (a[i][j] value)%edx in (t)%esi -- (starting position after every iter of outer loop,
-								    which, according to assembly, is a diagonal)
-mov1 (%eax), %ecx	- store (a[j][i] value)%eax in (s)%ecx
-addl $4, %eax		- add 4 to (ptr to a[j][i])%eax (move to next column)
-addl $40, %edx		- add N*4 to (ptr to a[i][j])%edx (moves to next row)
-movl %esi, -4(%eax)	- store (t)%esi in -4offset(a[j][i])
-movl %ecx, -40(%edx)	- store (s)%ecx in N*-4offset(array[i][j])%edx 
-cmpl %ebx, %eax		- compare double word (ptr to a[j][i])%eax - (ptr to end of current row)%ebx
-jne .L3			- jump .L3 if ~ZF(not equal or not zero)
+	mov1 (%edx), %esi 	- store a[i][0] in rowP
+	mov1 (%eax), %ecx	- store a[0][j] in colP
+	addl $4, %eax		- increment a[0][j] (move to next column)
+	addl $40, %edx		- increment a[i][0] (moves to next row)
+	movl %esi, -4(%eax)	- store old a[0][j] in old a[i][0] (using colP, prev col)
+	movl %ecx, -40(%edx)	- store old a[i][0] in old a[0][j] (using rowP, prev row)
+	cmpl %ebx, %eax		- compare double word i to j (using pointers)
+	jne .L3			- jump .L3 if ~ZF(not equal or not zero)
 */
 
 void transpose(array_t a) {
 	for(int i = 0; i < N; ++i) {
 		
-		/* revision 1: a revision that makes use of swapping values by pointers
-		for(int j = 0; j != i; ++j) {
-			int * t = &a[i][0] + j;
-			int * s = &a[j][0] + i;
-			int x = *t;
-			*t = *s;
-			*s = x;
+		/* revision 1: a revision that makes use of swapping values by pointers.
+				likely intended and is primary solution
+		*/
+		/*
+		int * rowP = &a[i][0];
+		int * colP = &a[0][i];
+		for(int j = 0; j < i; ++j) {
+			// swap values
+			int x = *rowP;
+			*rowP = *colP;
+			*colP = x;
+			// increment
+			rowP++;
+			colP += N;
 		}
 		*/
-		
-		/* revision 2: as an explanation, create a pointer that 
+		/* revision 2: functional solution that more closely models
+			behavior of assembly code. create a pointer that 
 			denotes diagonal position in the matrix. move 
 			equal positions right and down and place 
 			to-transpose values to prior pointer.
 			positions.
-		 */
-		int * t = &a[i][i];
-		int * rowEnd = &a[i][0] + N;
-		rowEnd--;
-		for(int * j = t; j != rowEnd;) {
-			j++;
-			int x = *j;
-			t += N;
-			*j = *t;
-			*t = x;
+		*/
+		int * colP = &a[0][i];
+		for(int * rowP = &a[i][0]; rowP != colP;) {
+			int x = *rowP;
+			*rowP = *colP;
+			*colP = x;
+			rowP++;	
+			colP += N;
 			
 		}
 	}
@@ -75,6 +83,7 @@ void printMatrix (array_t testArray) {
 	}
 	printf("}\n");
 }
+
 // contains test cases
 int main () {
 	array_t testArray;
