@@ -1,0 +1,43 @@
+# Author: John Nemeth
+# Description: Implements analogous swap function given in assignment
+# Sources: Lab file, prior class work, y86 simulator (java version)
+
+init:	irmovl Stack, %esp	# set up stack pointer
+	irmovl Stack, %ebp	# set up base pointer
+	call Main		# execute main program
+	halt			# terminate program
+
+# array of 4 elements
+	.align 4
+xp:	.long 0x0001
+yp:	.long 0x0002
+
+Main:	pushl %ebp
+	rrmovl %esp, %ebp
+	irmovl yp, %eax
+	pushl %eax	#push yp as argument
+	irmovl xp, %eax
+	pushl %eax	#push xp as argument
+	call Swap
+	rrmovl %ebp, %esp
+	popl %ebp
+	ret
+
+# int swap(int *xp, int *yp)
+Swap:	pushl %ebp
+	rrmovl %esp, %ebp
+	pushl %ebx		# push ebx to save it (callee-save
+	mrmovl 8(%ebp), %edx	# store *yp in edx (offsets -would- be 8+4 & 12+4 if %ebx pushed above rrmovl %esp, %ebp)
+	mrmovl 12(%ebp), %ecx	# store *xp in ecx
+	# todo
+	mrmovl (%edx), %ebx	# store *yp into ebx
+	mrmovl (%ecx), %eax	# store *xp into eax
+	rmmovl %eax, (%edx)	# store *xp into *yp
+	rmmovl %ebx, (%ecx)	# store *yp into *xp
+	popl %ebx		# pop saved ebx value
+	popl %ebp
+	ret	
+
+# stack starts here and grows to lower addresses
+	.pos 0x100
+Stack:
