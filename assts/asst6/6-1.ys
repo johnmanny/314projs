@@ -1,0 +1,101 @@
+# Author: John Nemeth
+# Description: Bubblesorts hardcoded values using swap
+# Sources: Prior classwork, class material
+
+init:	irmovl Stack, %esp  	# setup stack pointer 
+    	irmovl Stack, %ebp  	# setup base pointer   
+    	call Main
+    	halt 
+
+# array of 10 elements
+	.align 10 	
+length: .long 0xa
+array:	.long 0x4
+	.long 0x2
+    	.long 0x1
+    	.long 0x5
+    	.long 0x3
+    	.long 0x0
+    	.long 0x9
+    	.long 0x6
+    	.long 0x8
+    	.long 0x7
+    	
+Main:	pushl %ebp 
+    	rrmovl %esp,%ebp
+    	irmovl length, %eax	    # set array length of 10
+    	pushl %eax		    # push array length of 10
+    	irmovl array,%edx
+    	pushl %edx      	# push array
+    	call Bubblesort		# call bubblesort
+    	rrmovl %ebp,%esp
+    	popl %ebp
+    	ret 
+
+# Bubblesort(array, length)
+Bubblesort:	pushl %ebp
+    	rrmovl %esp,%ebp
+    	mrmovl 8(%ebp),%ecx 	# ecx = array - %ECX CANT OVERWRITE
+    	mrmovl 12(%ebp),%edx	# edx = length
+        mrmovl (%edx), %esi     # outerIndex = length - %ESI CANT OVERWRITE
+
+# outer loop
+OLoop:  irmovl 1, %eax
+        rrmovl %ecx, %edi       # put array start in edi
+        mrmovl 12(%ebp), %edx   # set iLoop index to length for each iteration of iLoop
+        subl %eax, %esi         # outerIndex - 1
+        jne iLoop               # jump inner loop if index != 0
+        jmp End                 # jump end if not
+
+# inner loop, can branch to 2 directions
+iLoop:  mrmovl (%edi), %eax     # store first val in eax
+        mrmovl 4(%edi), %ebx    # store second val in ebx
+        subl %eax, %ebx         # 2nd(ebx) - 1st(eax)
+        jl prepareSwap          # jump if positions should be swapped
+        jmp iLoopTwo            # if shouldn't swap, send to secondary iLoop section for remaining operations
+
+# prepares for swap call
+prepareSwap: irmovl 4, %eax     # set eax to 4
+        pushl %edx              # caller-save push (inner loop index)
+        pushl %ecx              # caller-save push (array memory index)
+        pushl %edi              # push current array index (arg 1)
+        addl %eax, %edi         # add offset for next index to edi
+        pushl %edi              # push offset of index (arg 2)
+        call Swap
+        popl %edi           
+        popl %edi               # is original start position (required for iLoopTwo)
+        popl %ecx
+        popl %edx
+        jmp iLoopTwo
+
+# continuation of iLoop
+iLoopTwo: 
+        irmovl 4, %eax
+        addl %eax, %edi         # move to next index
+        irmovl 1, %eax
+        subl %eax, %edx         # reduce length
+        jne iLoop               # another loop if range of length not reached
+        jmp OLoop               # otherwise, to next outer loop
+
+End:	rrmovl %ebp,%esp
+    	popl %ebp
+    	ret
+
+# int swap(int *xp, int *yp)
+Swap:	pushl %ebp
+    	rrmovl %esp, %ebp
+    	pushl %ebx		# push ebx to save it (callee-save
+    	mrmovl 8(%ebp), %edx	# store *yp in edx (offsets -would- be 8+4 & 12+4 if %ebx pushed above rrmovl %esp, %ebp)
+    	mrmovl 12(%ebp), %ecx	# store *xp in ecx
+    	mrmovl (%edx), %ebx	# store *yp into ebx
+    	mrmovl (%ecx), %eax	# store *xp into eax
+    	rmmovl %eax, (%edx)	# store *xp into *yp
+    	rmmovl %ebx, (%ecx)	# store *yp into *xp
+    	popl %ebx		# pop saved ebx value
+    	popl %ebp
+    	ret	
+
+# The stack grows to lower addresses from here
+	.pos 0x200	
+Stack:	 
+
