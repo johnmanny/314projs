@@ -8,7 +8,7 @@ init:	irmovl Stack, %esp  	# setup stack pointer
     	halt 
 
 # array of 10 elements
-	.align 10 	
+	.align 4
 length: .long 0xa
 array:	.long 0x4
 	.long 0x2
