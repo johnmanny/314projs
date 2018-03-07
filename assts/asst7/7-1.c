@@ -4,9 +4,10 @@
 	Sources: class material
 */
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
+#include <stdlib.h>
 
-#define N 4
+#define N 1000
 typedef int array_t[N][N];
 
 int dim() {
@@ -14,46 +15,68 @@ int dim() {
 }
 
 void f(array_t a, int x, int y) {
-	int dimension = dim();
-	int xTy = x * y;
-	unsigned int 
+	struct timeval end;
+	struct timeval start;
+	gettimeofday(&start, NULL);
+	// start body of function
+	int dimension = dim(), safetyJ = 0;
+	int xTy = x * y, multiple = 0;
+	unsigned * position = &a[0][0];
 	for (int i = 0; i < dimension; ++i) {
-		for (int j = 0; j < dimension; ++j) {
-			a[i][j] = i * xTy + j;
+		//unsigned * position = &a[i][0];
+		multiple = i * xTy;
+		
+		for (int j = 0; j < (dimension - 1); j+=2) {
+			*position = multiple + j;
+			position++;
+			*position = multiple + (j + 1);
+			position++;
+			
+			//a[i][j] = i * xTy + j;
+			safetyJ = j;
 		}
 	}
-	for (
+	/*
+	if (safetyJ < dimension) {
+		*position = multiple + safetyJ;
+		position++;
+		*position = multiple + (safetyJ + 1);
+	}
+	*/
+	// end body of function
+	gettimeofday(&end, NULL);
+	long long tPassed = (end.tv_sec - start.tv_sec)*1000000LL + (end.tv_usec - start.tv_usec);
+	printf("\toptimized f time passed: %f\n", tPassed/1000000.0);
 }
 
 
 void originalF(array_t a, int x, int y) {
-	clock_t start, end;
-	double cpuTimeUsed;
-	start = clock();
+	struct timeval end;
+	struct timeval start;
+	gettimeofday(&start, NULL);
+	
 	for (int i = 0; i < dim(); ++i) {
 		for (int j = 0; j < dim(); ++j) {
 			a[i][j] = i * x * y + j;
 		}
 	}
-	end = clock();
-	int mSeconds = (((double)(end - start)) * 1000) / (double)CLOCKS_PER_SEC; 
-	cpuTimeUsed = ((double)(end - start)) / (double) CLOCKS_PER_SEC;
-	printf("\ttime passed: %d seconds %d milliseconds\n", mSeconds/1000, mSeconds%1000);
-	printf("\torignalF time used: %f\n", cpuTimeUsed);
+	gettimeofday(&end, NULL);
+	long long tPassed = (end.tv_sec - start.tv_sec)*1000000LL + (end.tv_usec - start.tv_usec);
+	printf("\toriginal f time passed: %f\n", tPassed/1000000.0);
 }
 
 void checkArraysEqual(array_t a, array_t b) {
 	unsigned int isEqual = 1;
 	for (int i = 0; i < dim(); i++) {
 		for (int j = 0; j < dim(); j++) {
-			if (a[i][j] != b[i][j])
+			if (a[i][j] != b[i][j]) {
+				printf("Arrays not equal on %d, %d.\n\tunopti:%d - opti %d\n\t", i, j, a[i][j], b[i][j]);
 				isEqual = 0;
+			}
 		}
 	}
 	if (isEqual == 1)
 		printf("\tArrays are equal!\n------------------------------\n");
-	else
-		printf("\tArrays are NOT equal!\n------------------------------\n");
 }		
 				
 // contains test cases
