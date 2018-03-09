@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-#define N 1000
+#define N 999
 typedef int array_t[N][N];
 
 int dim() {
@@ -19,36 +19,29 @@ void f(array_t a, int x, int y) {
 	struct timeval start;
 	gettimeofday(&start, NULL);
 	// start body of function
-	int dimension = dim(), safetyJ = 0;
-	int xTy = x * y, multiple = 0;
-	unsigned * position = &a[0][0];
+	int dimension = dim(), j;				// separate dimension
+	int xTy = x * y, multiple, jBound = (dimension - 2);	// set boundary for inner loop and multiples variables
+	unsigned * position = &a[0][0];				// set pointer to beginning of array
 	for (int i = 0; i < dimension; ++i) {
-		//unsigned * position = &a[i][0];
-		multiple = i * xTy;
-		
-		for (int j = 0; j < (dimension - 1); j+=2) {
+		multiple = i * xTy;				// constantly update multiple
+		for (j = 0; j < jBound; j+=2) {
 			*position = multiple + j;
 			position++;
-			*position = multiple + (j + 1);
+			*position = multiple + j + 1;
 			position++;
-			
-			//a[i][j] = i * xTy + j;
-			safetyJ = j;
+		}
+		// to fix odd and even lengths (takes care of possible leftover values)
+		while (j < dimension) {
+			*position = multiple + (j);
+			position++;
+			j++;
 		}
 	}
-	/*
-	if (safetyJ < dimension) {
-		*position = multiple + safetyJ;
-		position++;
-		*position = multiple + (safetyJ + 1);
-	}
-	*/
 	// end body of function
 	gettimeofday(&end, NULL);
 	long long tPassed = (end.tv_sec - start.tv_sec)*1000000LL + (end.tv_usec - start.tv_usec);
 	printf("\toptimized f time passed: %f\n", tPassed/1000000.0);
 }
-
 
 void originalF(array_t a, int x, int y) {
 	struct timeval end;
@@ -87,4 +80,5 @@ int main() {
 	originalF(array, 1, 2);
 	f(optiArray, 1, 2);
 	checkArraysEqual(array, optiArray);
+	return 0;
 }
