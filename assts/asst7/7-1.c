@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-#define N 999
+#define N 1000
 typedef int array_t[N][N];
 
 int dim() {
@@ -19,21 +19,18 @@ void f(array_t a, int x, int y) {
 	struct timeval start;
 	gettimeofday(&start, NULL);
 	// start body of function
-	int dimension = dim(), j;				// separate dimension
-	int xTy = x * y, multiple, jBound = (dimension - 2);	// set boundary for inner loop and multiples variables
-	unsigned * position = &a[0][0];				// set pointer to beginning of array
+	int dimension = dim();			// separate dimension
+	int xTy = x * y, multiple;		// set boundary for inner loop and multiples variables
+	int j;					// declare here for second loop check
 	for (int i = 0; i < dimension; ++i) {
 		multiple = i * xTy;				// constantly update multiple
-		for (j = 0; j < jBound; j+=2) {
-			*position = multiple + j;
-			position++;
-			*position = multiple + j + 1;
-			position++;
+		for (j = 0; j < dimension - 2; j+=2) {
+			a[i][j] = multiple + j;
+			a[i][j + 1] = multiple + (j + 1);
 		}
 		// to fix odd and even lengths (takes care of possible leftover values)
 		while (j < dimension) {
-			*position = multiple + (j);
-			position++;
+			a[i][j] = multiple + j;
 			j++;
 		}
 	}
