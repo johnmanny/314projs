@@ -164,7 +164,7 @@ void printCache(struct cacheBlock *cacheArray, int size) {
 //// main
 // allocates enough memory to hold 16 cache blocks(1 per set). initialize cache so all blocks are invalid.
 int main() {
-	char cmdBuffer[INPUT_BUFF_SIZE], inputChar;
+	char cmdBuffer[INPUT_BUFF_SIZE];		// buffer for input incase of multiple characters entered
 	struct cacheBlock *cacheArray = mallocCacheArray(CACHE_SETS);
 	int inputIndex;
 	do {
@@ -173,11 +173,9 @@ int main() {
 		printf("Print Values: p\n\tQuit:         q\n\tSelect command from above: ");
 		
 		// input verification - stack smashing may occur at input lengths > 49(50 is buffer size) upon exit
-		inputChar = 0;
 		inputIndex = 0;
-		while (inputChar != '\n') {
-			inputChar = getc(stdin);
-			cmdBuffer[inputIndex] = inputChar;
+		while (cmdBuffer[inputIndex - 1] != '\n') {
+			cmdBuffer[inputIndex] = getc(stdin);
 			inputIndex++;
 		}
 		if (inputIndex > 2) {
