@@ -35,13 +35,48 @@ unsigned int getTag(unsigned int address) {
 	return (address >> 6);			// returns 26 bit tag
 }
 
-// read hex input
+/*  parse method - in progress
+unsigned int parseHexInput(char *input) {
+	int index = 0;
+	char value = 0;
+	unsigned int returnVal = 0;
+	if (input == NULL) {
+		printf("Error! Input character buffer is NULL! Try again: ");
+		return 0;
+	}
+	if (input[index] == '\n') {
+		printf("Error! First character is newline! Try again: ");
+		return 0;
+	}
+	if (input[index] == '-') {
+		printf("Error! No negative values allowed! Try again: ");
+		return 0;
+	}
+	sscanf(input, "%x", &returnVal);
+	printf("RETURNVAL IS: %x", returnVal);
+	return returnVal;	
+		
+}*/
+
+// read hex input - current method works & no crashes occur
 unsigned int readHex(FILE *input) {
 	unsigned int inputVal;
 	scanf("%x", &inputVal);		// scan input as hex and place in inputval
 	while(getchar() != '\n');	// clear buffer
 	return inputVal;
+	/*
+	char buffer[INPUT_BUFF_SIZE];
+	int i;
+	char inputChar = 0;
+	do {
+		inputChar = getc(input);
+		buffer[i] = inputChar;
+		i++;
+	} while((inputChar != EOF) && (inputChar != '\n'));
+	return parseHexInput(buffer);
+	*/
 }
+
 
 // function to write value to cache
 void writeValue(struct cacheBlock *cArray) {
