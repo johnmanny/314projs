@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CACHE_SETS 16
-#define INPUT_BUFF_SIZE 20
+#define CACHE_SETS 16			// defined value for number of 'sets' 
+#define INPUT_BUFF_SIZE 50		// input larger than 10-50 may cause stack smashing error upon exit
 
 // struct used to represent cache block
 struct cacheBlock {
@@ -17,30 +17,29 @@ struct cacheBlock {
 	unsigned char offset[4];
 };
  
-//// assignment functions require only bitwise operations
+//// assignment functions require bitwise operations
 // returns the byte offset of the address within its cache block
 unsigned int getOffset(unsigned int address) {
-	unsigned int mask = 0x00000003;
+	unsigned int mask = 0x00000003;		// mask for offset bits 0-1
 	return (mask & address);
 }
 
 // returns cache set for the address
 unsigned int getSet(unsigned int address) {
-	unsigned int mask = 0x0000003C;
+	unsigned int mask = 0x0000003C;		// create exact mask for set bits 2-5
 	return (address & mask) >> 2;
 }
 
 // returns cache tag for the address
 unsigned int getTag(unsigned int address) {
-	unsigned int tag = address >> 6;
-	return (address >> 6);
+	return (address >> 6);			// returns 26 bit tag
 }
 
 // read hex input
 unsigned int readHex(FILE *input) {
 	unsigned int inputVal;
-	scanf("%x", &inputVal);
-	while(getchar() != '\n');
+	scanf("%x", &inputVal);		// scan input as hex and place in inputval
+	while(getchar() != '\n');	// clear buffer
 	return inputVal;
 }
 
@@ -53,18 +52,24 @@ void writeValue(struct cacheBlock *cArray) {
 	unsigned int tag = getTag(hexAddr);
 	unsigned int set = getSet(hexAddr);
 	unsigned int offset = getOffset(hexAddr);
-	if (cArray[set].valid == '1') {
-		printf("---block evicted\nset %u - valid %c - tag %u - value ", set, cArray[set].valid, cArray[set].tag);
+	if (cArray[set].valid == '1') {					// check for block being set valid already
+		printf("\n---block evicted\nset %u - valid %c - tag %u - value ", set, cArray[set].valid, cArray[set].tag);
 		printf("%.2x %.2x %.2x %.2x\n", cArray[set].offset[0], cArray[set].offset[1], cArray[set].offset[2], cArray[set].offset[3]);
 	}
 	cArray[set].valid = '1';
 	cArray[set].tag = tag;
-	unsigned int mask = 0xFF;
+	unsigned int mask = 0xFF;					// created mask for getting individual bytes
+	/* instead of index 0-3, we would place offset to offset+3
+		but assignment specs state only addresses that are
+		multiples of 4 will be entered so this will have
+		same affect and will help prevent any invalid
+		hex input errors
+	*/
 	cArray[set].offset[0] = hexVal & mask;
 	cArray[set].offset[1] = (hexVal >> 8) & mask;
 	cArray[set].offset[2] = (hexVal >> 16) & mask;
 	cArray[set].offset[3] = (hexVal >> 24) & mask;
-	printf("---wrote block\nset %u - valid %c - tag %u - value ", set, cArray[set].valid, tag);
+	printf("\n---wrote block\nset %u - valid %c - tag %u - value ", set, cArray[set].valid, tag);
 	printf("%.2x %.2x %.2x %.2x\n", cArray[set].offset[0], cArray[set].offset[1], cArray[set].offset[2], cArray[set].offset[3]);
 
 }
@@ -76,7 +81,7 @@ void readByte(struct cacheBlock *cArray) {
 	unsigned tag = getTag(hexAddr);
 	unsigned set = getSet(hexAddr);
 	unsigned offset = getOffset(hexAddr);
-	printf("looking for set index: %u - tag: %u\n", set, tag);
+	printf("\nlooking for set index: %u - tag: %u\n", set, tag);
 	if (cArray[set].valid == '1') {
 		printf("found set: %u - tag: %u - offset: %u - valid: %c - value: %.2x\n", set, tag, offset, cArray[set].valid, cArray[set].offset[offset]);
 		if (tag == cArray[set].tag)
@@ -88,12 +93,12 @@ void readByte(struct cacheBlock *cArray) {
 		printf("miss! no valid set found!");
 }
 
-// mallocs and inits cache
+// mallocs and inits cache values
 struct cacheBlock *mallocCacheArray(int size) {
 	struct cacheBlock *cacheArray = NULL;
 	cacheArray = (struct cacheBlock *) malloc(sizeof(struct cacheBlock) * size);
 	for(int i = 0; i < size; i++) {
-		cacheArray[i].valid = '0';
+		cacheArray[i].valid = '0';		// set all blocks to not valid
 		cacheArray[i].tag = 0;
 		cacheArray[i].offset[0] = 0xbb;
 		cacheArray[i].offset[1] = 0xaa;
@@ -105,9 +110,8 @@ struct cacheBlock *mallocCacheArray(int size) {
 
 // frees malloced memory
 void freeCacheArray(struct cacheBlock *cachePtr, int size) {
-	if (cachePtr != NULL) {
+	if (cachePtr != NULL) 
 		free(cachePtr);
-	} 
 }
 
 // prints cache using its structure
@@ -133,22 +137,23 @@ int main() {
 		printf("\t-Cache Simulator-\n\tWrite Value:  w\n\tRead Value:   r\n\t");
 		printf("Print Values: p\n\tQuit:         q\n\tSelect command from above: ");
 		
-		// input verification
+		// input verification - stack smashing may occur at input lengths > 49(50 is buffer size) upon exit
 		inputChar = 0;
 		inputIndex = 0;
-		while (inputChar != '\n' && (inputIndex < INPUT_BUFF_SIZE)) {
+		while (inputChar != '\n') {
 			inputChar = getc(stdin);
 			cmdBuffer[inputIndex] = inputChar;
 			inputIndex++;
 		}
 		if (inputIndex > 2) {
-			printf("Only 1 character allowed for commands! Try again!\n");
+			printf("\nOnly 1 character allowed for commands! Try again!\n");
+			cmdBuffer[0] = 0;		// set first character to empty in case it was q
 			continue;
 		}
-		
+		// switch statement for command options
 		switch (cmdBuffer[0]) {
 		case 'q':
-			printf("Quitting...\n");
+			printf("\nQuitting...\n");
 			break;
 		case 'w':
 			writeValue(cacheArray);
@@ -161,14 +166,15 @@ int main() {
 			break;
 		case '\r':
 		case '\n':
-			printf("Try a command!\n");
+			printf("\nNo Command entered!\n");
 		case 0:
 			break;
 		default:
-			printf("Command '%c' not recognized!\n", cmdBuffer[0]);
+			printf("\nCommand '%c' not recognized!\n", cmdBuffer[0]);
 			break;
 		}
 	} while(cmdBuffer[0] != 'q');
+	// frees allocated 'cache' memory
 	freeCacheArray(cacheArray, CACHE_SETS);
 	return 0;
 }
