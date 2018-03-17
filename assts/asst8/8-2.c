@@ -198,10 +198,6 @@ int main() {
 			printCache(cacheArray, CACHE_SETS);
 			break;
 		case '\r':
-		case '\n':
-			printf("\nNo Command entered!\n");
-		case 0:
-			break;
 		default:
 			printf("\nCommand '%c' not recognized!\n", command);
 			break;
