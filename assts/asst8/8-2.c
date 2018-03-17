@@ -98,7 +98,7 @@ void writeValue(struct cacheBlock *cArray) {
 		but assignment specs state only addresses that are
 		multiples of 4 will be entered so this will have
 		same affect and will help prevent any invalid
-		hex input errors
+		hex input errors...right?
 	*/
 	cArray[set].offset[0] = hexVal & mask;
 	cArray[set].offset[1] = (hexVal >> 8) & mask;
@@ -147,6 +147,8 @@ struct cacheBlock *mallocCacheArray(int size) {
 void freeCacheArray(struct cacheBlock *cachePtr, int size) {
 	if (cachePtr != NULL) 
 		free(cachePtr);
+	else 
+		printf("malloc'd memory is null, brah\n");
 }
 
 // prints cache using its structure
@@ -164,27 +166,27 @@ void printCache(struct cacheBlock *cacheArray, int size) {
 //// main
 // allocates enough memory to hold 16 cache blocks(1 per set). initialize cache so all blocks are invalid.
 int main() {
-	char cmdBuffer[INPUT_BUFF_SIZE];		// buffer for input incase of multiple characters entered
+	char command, inputCheck;		// buffer for input incase of multiple characters entered
 	struct cacheBlock *cacheArray = mallocCacheArray(CACHE_SETS);
-	int inputIndex;
 	do {
 		printf("\n======================================================\n");
 		printf("\t-Cache Simulator-\n\tWrite Value:  w\n\tRead Value:   r\n\t");
 		printf("Print Values: p\n\tQuit:         q\n\tSelect command from above: ");
 		
-		// input verification - stack smashing may occur at input lengths > 49(50 is buffer size) upon exit
-		inputIndex = 0;
-		while (cmdBuffer[inputIndex - 1] != '\n') {
-			cmdBuffer[inputIndex] = getc(stdin);
-			inputIndex++;
+		command = getchar();
+		// input verification starts here
+		if (command == '\n') {
+			printf("\nNo Command entered!\n");
+			continue;
 		}
-		if (inputIndex > 2) {
+		inputCheck = getchar();
+		if (inputCheck != '\n') {
 			printf("\nOnly 1 character allowed for commands! Try again!\n");
-			cmdBuffer[0] = 0;		// set first character to empty in case it was q
+			while (getchar() != '\n');
 			continue;
 		}
 		// switch statement for command options
-		switch (cmdBuffer[0]) {
+		switch (command) {
 		case 'q':
 			printf("\nQuitting...\n");
 			break;
@@ -203,10 +205,10 @@ int main() {
 		case 0:
 			break;
 		default:
-			printf("\nCommand '%c' not recognized!\n", cmdBuffer[0]);
+			printf("\nCommand '%c' not recognized!\n", command);
 			break;
 		}
-	} while(cmdBuffer[0] != 'q');
+	} while(command != 'q');
 	// frees allocated 'cache' memory
 	freeCacheArray(cacheArray, CACHE_SETS);
 	return 0;
