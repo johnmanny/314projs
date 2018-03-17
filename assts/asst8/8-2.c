@@ -52,6 +52,7 @@ unsigned int parseHexInput(char *input) {
 		printf("Error! No negative values allowed! Try again: ");
 		return 0;
 	}
+	// TODO: include switch statements
 	sscanf(input, "%x", &returnVal);
 	printf("RETURNVAL IS: %x", returnVal);
 	return returnVal;	
@@ -173,6 +174,7 @@ int main() {
 		printf("\t-Cache Simulator-\n\tWrite Value:  w\n\tRead Value:   r\n\t");
 		printf("Print Values: p\n\tQuit:         q\n\tSelect command from above: ");
 		command = getchar();
+		// input verification above switch statement for cases of just hitting enter and multiple chars
 		if (command == '\n') {				// checks if command was entered
 			printf("\nNo Command entered!\n");
 			continue;
@@ -180,7 +182,7 @@ int main() {
 		inputCheck = getchar();
 		if (inputCheck != '\n') {			// checks if there was more than 1 character entered
 			printf("\nOnly 1 character allowed for commands! Try again!\n");
-			while (getchar() != '\n');
+			while (getchar() != '\n');		// clearing buffer required to be above switch statement
 			continue;
 		}
 		// switch statement for command options
