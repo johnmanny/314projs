@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define CACHE_SETS 16			// defined value for number of 'sets' 
 #define INPUT_BUFF_SIZE 50		// input larger than 10-50 may cause stack smashing error upon exit
@@ -35,46 +36,50 @@ unsigned int getTag(unsigned int address) {
 	return (address >> 6);			// returns 26 bit tag
 }
 
-/*  parse method - in progress
-unsigned int parseHexInput(char *input) {
+/*// parse method - almost complete
+unsigned int parseHexInput(char *input, int size) {
 	int index = 0;
 	char value = 0;
 	unsigned int returnVal = 0;
 	if (input == NULL) {
 		printf("Error! Input character buffer is NULL! Try again: ");
-		return 0;
+		return readHex(stdin);
 	}
 	if (input[index] == '\n') {
 		printf("Error! First character is newline! Try again: ");
-		return 0;
+		return readHex(stdin);
 	}
 	if (input[index] == '-') {
 		printf("Error! No negative values allowed! Try again: ");
-		return 0;
+		return readHex(stdin);
 	}
-	// TODO: include switch statements
-	sscanf(input, "%x", &returnVal);
-	printf("RETURNVAL IS: %x", returnVal);
+	// TODO: include switch statements, allowed chars
+	//char *allowedChars = "
+	char newArray[size];
+	for (int i = 0; i < size; i++)
+		newArray[i] = input[i];
+	sscanf(newArray, "%x ", &returnVal);
 	return returnVal;	
 		
-}*/
+}
+*/
 
 // read hex input - current method works & no crashes occur
-unsigned int readHex(FILE *input) {
+int readHex(FILE *input) {
 	unsigned int inputVal;
 	scanf("%x", &inputVal);		// scan input as hex and place in inputval
 	while(getchar() != '\n');	// clear buffer
 	return inputVal;
 	/*
 	char buffer[INPUT_BUFF_SIZE];
-	int i;
+	int i = 0;
 	char inputChar = 0;
 	do {
 		inputChar = getc(input);
 		buffer[i] = inputChar;
 		i++;
 	} while((inputChar != EOF) && (inputChar != '\n'));
-	return parseHexInput(buffer);
+	return parseHexInput(buffer, i);
 	*/
 }
 
