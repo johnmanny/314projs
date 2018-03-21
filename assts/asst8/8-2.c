@@ -5,8 +5,6 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdlib.h>
 
 #define CACHE_SETS 16			// defined value for number of 'sets' 
 #define INPUT_BUFF_SIZE 50		// input larger than 10-50 may cause stack smashing error upon exit
