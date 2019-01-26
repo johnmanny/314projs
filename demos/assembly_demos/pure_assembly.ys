@@ -1,5 +1,5 @@
 # Author: John Nemeth
-# Description: Implements analogous swap function given in assignment
+# Description: Implements analogous swap function
 # Sources: Lab file, prior class work, y86 simulator (java version)
 
 init:	irmovl Stack, %esp	# set up stack pointer
